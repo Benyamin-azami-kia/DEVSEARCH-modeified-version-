@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="projects">
+    <section class="hero-section text-center">
+      <div class="container container--narrow">
+        <div class="hero-section__box">
+          <h2>Search for <span>Projects</span></h2>
+        </div>
+
+        <div class="hero-section__search">
+          <form class="form" action="{% url 'projects' %}" method="get" id="searchForm">
+            <div class="form__field">
+              <label for="formInput#search">Search By Projects </label>
+              <input class="input input--text" id="formInput#search" type="text" name="query_search"
+                placeholder="Search by Project Title" value="{{query_search}}" />
+            </div>
+
+            <input class="btn btn--sub btn--lg" type="submit" value="Search" />
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- Search Result: DevList -->
+    <section class="projectsList">
+      <div class="container">
+        <div class="grid grid--three">
+       {% for project in projects %} 	
+          <div class="column">
+            <div class="card project">
+              <a href="{% url 'project' project.id %}" class="project">
+                <img class="project__thumbnail" src="{{ project.featured_image.url }}" alt="project thumbnail" />
+                <div class="card__body">
+                  <h3 class="project__title">{{project.title|linebreaksbr}}</h3>
+                  <p><a class="project__author" href="{% url 'profile' project.owner.pk %}">{{project.owner.user.username}}</a></p>
+                  <p class="project--rating">
+                    <span style="font-weight: bold;">{{project.vote_ratio}}</span> Postitive
+                    Feedback ({{project.vote_total}} Vote{{project.vote_total|pluralize}})
+                  </p>
+                  <div class="project__tags">
+                    {% for t in project.tags.all %}
+                    <span class="tag tag--pill tag--main">
+                      <small>{{t.name}}</small>
+                    </span>
+                    {% endfor %}
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+		{% endfor %}
+        </div>
+      </div>
+    </section>
+    {% include 'pagination.html' with query_search=projects custom_range=custom_range %}
+</main>
+{% endblock %}
